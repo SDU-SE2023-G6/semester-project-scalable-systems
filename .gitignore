@@ -1,0 +1,7 @@
+__pycache__
+.idea
+debug.log
+btc_raw.csv
+btc.csv
+tweets_raw.csv
+tweets.csv
