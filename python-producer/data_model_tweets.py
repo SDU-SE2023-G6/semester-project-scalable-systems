@@ -24,7 +24,7 @@ class TweetObj:
 @dataclass
 class TweetPackageObj:
     payload: Union[TweetObj, str]
-    correlation_id: str
+    # correlation_id: str # same as in btc model. Causes an error.
     created_at: datetime = field(default_factory=datetime.utcnow)
     schema_version: int = field(default=1)
 

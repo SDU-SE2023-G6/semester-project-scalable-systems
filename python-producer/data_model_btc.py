@@ -21,7 +21,7 @@ class BitcoinPriceObj:
 @dataclass
 class BitcoinPackageObj:
     payload: Union[BitcoinPriceObj, str]
-    correlation_id: str
+    # correlation_id: str # This is not set when __init__ is called.
     created_at: datetime = field(default_factory=datetime.utcnow)
     schema_version: int = field(default=1)
 

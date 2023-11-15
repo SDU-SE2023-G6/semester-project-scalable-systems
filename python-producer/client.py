@@ -1,7 +1,7 @@
 from kafka import KafkaProducer, KafkaConsumer
 import json
 
-KAFKA_BROKERS: str = "strimzi-kafka-bootstrap.kafka:9092"
+KAFKA_BROKERS: str = "localhost:9092" # Require port-forwarding
 TWEET_TOPIC: str = "TWEET_INGESTION"
 BITCOIN_TOPIC: str = "BITCOIN_INGESTION"
 DEFAULT_ENCODING: str = "utf-8"
@@ -14,6 +14,7 @@ def get_producer() -> KafkaProducer:
 def send_msg(value, key: str, topic: str, producer: KafkaProducer) -> None:
     producer.send(
         topic=topic,
-        key=key.encode(DEFAULT_ENCODING),
+        # Added string convertion since it is a hard requirement for the kafka producer
+        key=str(key).encode(DEFAULT_ENCODING),
         value=json.dumps(value).encode(DEFAULT_ENCODING),
     )

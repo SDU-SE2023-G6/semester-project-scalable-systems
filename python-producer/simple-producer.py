@@ -6,6 +6,7 @@ import csv
 from client import get_producer, TWEET_TOPIC, BITCOIN_TOPIC, send_msg
 from data_model_btc import get_bitcoin_price_obj, BitcoinPackageObj, BitcoinPriceObj
 from data_model_tweets import get_tweet_obj, TweetPackageObj, TweetObj
+from kafka.errors import NoBrokersAvailable
 
 # Number of seconds from 2016-01-01 to 2019-03-29
 total_seconds_dataset = 1.022e8
@@ -36,7 +37,7 @@ def seconds_to_readable(seconds):
         return parts[0] if parts else "0 seconds"
 
 
-def send_btc(btc:BitcoinPriceObj) -> None:
+def send_btc(btc: BitcoinPriceObj) -> None:
     producer = get_producer()
     po = BitcoinPackageObj(payload=btc)
     send_msg(key=btc.timestamp, value=po.to_dict(), topic=BITCOIN_TOPIC, producer=producer)
@@ -120,6 +121,14 @@ def main():
         print ("No velocity specified, using default velocity of 1")
     
     print(f"Will try to complete ingestion in {seconds_to_readable(total_target_time_in_seconds(velocity))}")
+
+    print("Test that producer is working")
+    try:
+        get_producer();
+    except NoBrokersAvailable as e:
+        print(f"Failure: {e}")
+        return
+
 
     numberOfWorkers = 10
     taskQueue = queue.Queue()
