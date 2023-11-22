@@ -3,6 +3,7 @@ import sys
 import time
 import queue
 import csv
+import os
 from client import get_producer, TWEET_TOPIC, BITCOIN_TOPIC, send_msg
 from data_model_btc import get_bitcoin_price_obj, BitcoinPackageObj, BitcoinPriceObj
 from data_model_tweets import get_tweet_obj, TweetPackageObj, TweetObj
