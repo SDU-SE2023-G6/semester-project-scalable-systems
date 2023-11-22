@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tweets-and-btc-data-pv
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadOnlyMany
+  claimRef:
+    name: tweets-and-btc-data-pvc
+    namespace: default
+  capacity:
+    storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tweets-and-btc-data-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadOnlyMany
+  volumeName: tweets-and-btc-data-pvc 
+  resources:
+    requests:
+      storage: 1Gi
+
