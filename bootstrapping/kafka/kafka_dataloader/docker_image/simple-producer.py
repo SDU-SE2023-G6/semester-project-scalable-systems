@@ -3,10 +3,14 @@ import sys
 import time
 import queue
 import csv
+import os
 from client import get_producer, TWEET_TOPIC, BITCOIN_TOPIC, send_msg
 from data_model_btc import get_bitcoin_price_obj, BitcoinPackageObj, BitcoinPriceObj
 from data_model_tweets import get_tweet_obj, TweetPackageObj, TweetObj
 from kafka.errors import NoBrokersAvailable
+
+BTC_FILE = os.getenv("BTC_FILE_PATH", "./btc.csv") # load file based on env variable or take default value
+TWEETS_FILE = os.getenv("TWEETS_FILE_PATH", "./tweets.csv")
 
 # Number of seconds from 2016-01-01 to 2019-03-29
 total_seconds_dataset = 1.022e8
@@ -145,7 +149,7 @@ def main():
 
     print("Loading btc.csv...", end="")
     try:
-        btc_file = open("btc.csv", "r", encoding="utf-8-sig")
+        btc_file = open(BTC_FILE, "r", encoding="utf-8-sig")
         btc_csv = csv.reader(btc_file, delimiter=",")
     except FileNotFoundError:
         print(" File not found.")
@@ -153,7 +157,7 @@ def main():
     print(" Done.")
     print("Loading tweets.csv...", end="")
     try:
-        tweet_file = open("tweets.csv", "r", encoding="utf-8-sig")
+        tweet_file = open(TWEETS_FILE, "r", encoding="utf-8-sig")
         tweet_csv = csv.reader(tweet_file, delimiter=",")
     except FileNotFoundError:
         print(" File not found.")

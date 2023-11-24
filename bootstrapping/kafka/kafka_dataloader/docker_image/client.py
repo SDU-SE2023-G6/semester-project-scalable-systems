@@ -1,7 +1,7 @@
 from kafka import KafkaProducer, KafkaConsumer
 import json
 
-KAFKA_BROKERS: str = "localhost:9092" # Require port-forwarding
+KAFKA_BROKERS: str = "strimzi-kafka-bootstrap.kafka:9092" # Require port-forwarding
 TWEET_TOPIC: str = "TWEET_INGESTION"
 BITCOIN_TOPIC: str = "BITCOIN_INGESTION"
 DEFAULT_ENCODING: str = "utf-8"

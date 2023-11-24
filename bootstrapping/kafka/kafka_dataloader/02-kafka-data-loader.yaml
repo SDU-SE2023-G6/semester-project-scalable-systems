@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-producer 
+  labels:
+    app: simple-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-producer
+  template:
+    metadata:
+      labels:
+        app: simple-producer 
+    spec:
+      containers:
+      - name: simple-producer-pod
+        image: hschwrz/simple-producer:1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
