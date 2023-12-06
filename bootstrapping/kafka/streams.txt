@@ -1,0 +1,9 @@
+select all bitcoin data:
+
+CREATE STREAM bitcoin_data (payload STRING, created_at STRING, schema_version INT) WITH (kafka_topic='BITCOIN_INGESTION', value_format='JSON');
+
+
+select all tweet data:
+
+CREATE STREAM tweets (payload STRING, created_at STRING, schema_version INT) with (kafka_topic='TWEET_INGESTION', value_format='JSON');
+
