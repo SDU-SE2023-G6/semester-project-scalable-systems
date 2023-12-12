@@ -9,8 +9,8 @@ from data_model_btc import get_bitcoin_price_obj, BitcoinPackageObj, BitcoinPric
 from data_model_tweets import get_tweet_obj, TweetPackageObj, TweetObj
 from kafka.errors import NoBrokersAvailable
 
-BTC_FILE = os.getenv("BTC_FILE_PATH", "./btc.csv") # load file based on env variable or take default value
-TWEETS_FILE = os.getenv("TWEETS_FILE_PATH", "./tweets.csv")
+BTC_FILE = os.getenv("BTC_FILE_PATH", "../data/btc.csv") # load file based on env variable or take default value
+TWEETS_FILE = os.getenv("TWEETS_FILE_PATH", "../data/tweets.csv")
 
 # Number of seconds from 2016-01-01 to 2019-03-29
 total_seconds_dataset = 1.022e8
@@ -123,6 +123,21 @@ def main():
         velocity = int(sys.argv[1])
     else:
         print ("No velocity specified, using default velocity of 1")
+
+    print(f"Checking if the uinput files exists...")
+
+    if not os.path.exists(BTC_FILE):
+            print("BTC file not found")
+            print(os.listdir("./"))
+            print(os.listdir("./data"))
+            return False
+    print("BTC file found.")
+
+    if not os.path.exists(TWEETS_FILE):
+            print("TWEETS file not found")
+            print(os.listdir("./"))
+            return # Exit early because file doesnt exist
+    print("TWEETS file found.")
     
     print(f"Will try to complete ingestion in {seconds_to_readable(total_target_time_in_seconds(velocity))}")
 
