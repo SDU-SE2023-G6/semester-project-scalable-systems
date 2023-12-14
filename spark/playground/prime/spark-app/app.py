@@ -37,7 +37,7 @@ def aggregateWindow(parsedDataSource):
         .limit(14400)       
 
 
-# Debug output to console, replace with Kafka/Other stream output
+# Debug output to console
 def startWriteStreamQuery(stream):
     return aggregatedMetricsWindow.writeStream \
         .outputMode("complete") \
@@ -46,8 +46,21 @@ def startWriteStreamQuery(stream):
         .option("numRows", 100) \
         .start()
 
+# Write aggregated metrics to Kafka stream as JSON
+def startWriteKafkaStream(stream):
+    return stream \
+        .selectExpr("to_json(struct(*)) AS value") \
+        .writeStream \
+        .outputMode("complete") \
+        .format("kafka") \
+        .option("kafka.bootstrap.servers", "kafka:9093") \
+        .option("topic", "aggregated_metrics_topic") \
+        .option("checkpointLocation", "/opt/bitnami/spark/checkpoints") \
+        .start()
+
+
 
 parsedDataSource = parseDataSource(df)
 aggregatedMetricsWindow = aggregateWindow(parsedDataSource)
 
-startWriteStreamQuery(aggregatedMetricsWindow).awaitTermination()
+startWriteKafkaStream(aggregatedMetricsWindow).awaitTermination()
