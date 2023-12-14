@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: simple-producer 
+  namespace: default
   labels:
     app: simple-producer
 spec:
@@ -22,8 +23,8 @@ spec:
         - containerPort: 80
         resources:
           limits:
-            memory: 600Mi
-            cpu: 1
+            memory: 250Mi
+            cpu: 250m
           requests:
-            memory: 300Mi
-            cpu: 500m
+            memory: 50Mi
+            cpu: 100m
