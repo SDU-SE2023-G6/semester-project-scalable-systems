@@ -23,9 +23,14 @@
             python310Packages.pyspark
             python310Packages.pandas
             python310Packages.numpy
+            python310Packages.kafka-python
+            kubectl
+            minikube
+            kubernetes-helm
           ];
           shellHook = ''
-            alias spark="docker run -it --rm -p 4040:4040 -v $(pwd)/sparkvol:/opt/spark/work-dir/sparkvol --network host spark:python3 /opt/spark/bin/pyspark"
+            alias dc="docker compose"
+            alias pyspark="docker run -it --rm -p 4040:4040 -v $(pwd)/sparkvol:/opt/spark/work-dir/sparkvol --network host spark:python3 /opt/spark/bin/pyspark"
           '';
         };
 
