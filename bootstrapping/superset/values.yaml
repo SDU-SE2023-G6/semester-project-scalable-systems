@@ -1,0 +1,78 @@
+# -- Extra environment variables that will be passed into pods
+extraEnv: {}
+
+# -- Extra files to mount on `/app/pythonpath` as secrets
+extraSecrets: {}
+
+# -- Extra environment variables to pass as secrets
+extraSecretEnv: {}
+
+# -- A dictionary of overrides to append at the end of superset_config.py
+configOverrides:
+  python_packages: |
+    # Install required Python packages for KSQL and HDFS
+    pip install ksql sqlalchemy-ksql
+
+# -- Datasource configuration
+extraConfigs:
+  datasources.yaml: |
+    databases:
+      - database_name: ksql_database
+        sqlalchemy_uri: ksql://10.1.18.46:8088
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  resources:
+      requests:
+        cpu: "250m"
+      limits:
+        cpu: "500m"
+  auth:
+    username: superset
+    password: superset
+    database: superset
+
+# Redis configuration
+redis:
+  enabled: true
+  auth:
+    password: superset
+
+# Init configuration
+init:
+  resources: {}
+  createAdmin: true
+  adminUser:
+    username: admin
+    firstname: Superset
+    lastname: Admin
+    email: admin@superset.com
+    password: admin
+  loadExamples: false
+
+# Superset node configuration
+supersetNode:
+  resources: {}
+
+# Superset worker configuration
+supersetWorker:
+  resources: {}
+
+# Superset Celery Beat configuration
+supersetCeleryBeat:
+  enabled: false
+
+# Superset Celery Flower configuration
+supersetCeleryFlower:
+  enabled: false
+
+# Ingress configuration
+ingress:
+  enabled: false
+
+# Resource allocation
+resources: {}
+
+# Custom hostAliases
+hostAliases: []
