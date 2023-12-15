@@ -23,6 +23,8 @@
             python310Packages.pyspark
             python310Packages.pandas
             python310Packages.numpy
+            python310Packages.requests
+            python310Packages.matplotlib
             python310Packages.kafka-python
             kubectl
             minikube

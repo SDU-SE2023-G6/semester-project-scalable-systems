@@ -11,6 +11,6 @@ helm install -n stackable spark-k8s-operator stackable-stable/spark-k8s-operator
 # Install chart
 helm install -n spark minio oci://registry-1.docker.io/bitnamicharts/minio --set service.type=NodePort --set defaultBuckets=spark-logs --set auth.rootUser=admin --set auth.rootPassword=password
 
-kubectl apply -n spark -f spark-configuration.yaml
+kubectl apply -n spark -f spark-configurations.yaml
 
 kubectl apply -n spark -f spark-history-server.yaml
