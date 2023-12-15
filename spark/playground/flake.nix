@@ -30,7 +30,8 @@
           ];
           shellHook = ''
             alias dc="docker compose"
-            alias pyspark="docker run -it --rm -p 4040:4040 -v $(pwd)/sparkvol:/opt/spark/work-dir/sparkvol --network host spark:python3 /opt/spark/bin/pyspark"
+            alias spark="docker exec -it prime_spark /opt/bitnami/spark/bin/spark-submit /opt/bitnami/spark/work/"
+            alias kafkaLogs="docker exec -it prime_kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic"
           '';
         };
 

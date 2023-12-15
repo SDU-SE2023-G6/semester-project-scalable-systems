@@ -12,7 +12,9 @@ RUN apt-get update && \
     curl -L "https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.2.0/spark-token-provider-kafka-0-10_2.12-3.2.0.jar" -o /opt/bitnami/spark/jars/spark-token-provider-kafka-0-10_2.12-3.2.0.jar && \
     curl -L "https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.8.0/commons-pool2-2.8.0.jar" -o /opt/bitnami/spark/jars/commons-pool2-2.8.0.jar
 
-RUN mkdir -p /opt/bitnami/spark/checkpoints && chown -R 1001:1001 /opt/bitnami/spark/checkpoints
+RUN mkdir -p /opt/bitnami/spark/checkpoints/sentiment && chown -R 1001:1001 /opt/bitnami/spark/checkpoints/sentiment
+RUN mkdir -p /opt/bitnami/spark/checkpoints/agg/btc && chown -R 1001:1001 /opt/bitnami/spark/checkpoints/agg/btc
+RUN mkdir -p /opt/bitnami/spark/checkpoints/agg/tweet && chown -R 1001:1001 /opt/bitnami/spark/checkpoints/agg/tweet
 
 USER 1001
 

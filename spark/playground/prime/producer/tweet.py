@@ -1,6 +1,8 @@
 from kafka import KafkaProducer
 import random
 import time
+from datetime import datetime, timedelta
+
 
 # Kafka producer configuration
 producer = KafkaProducer(
@@ -10,38 +12,44 @@ producer = KafkaProducer(
 
 # Generate random data for id, user, likes, and text
 def generate_random_data():
-    id = random.randint(1, 1000)
+    id = str(random.randint(1, 1000))
     user = f"user_{random.randint(1, 100)}"
+    fullname = f"Fullname {user}"
+    url = "url"
+    timestamp = generate_timestamp()
+    replies = 0
     likes = random.randint(0, 100)
+    retweets = 0
     text = f"Lorem ipsum text {random.randint(1, 1000)}"
-    return id, user, likes, text
 
-# Generate timestamps within the last 5 minutes
+    return {
+        "id": id,
+        "user": user,
+        "fullname": fullname,
+        "url": url,
+        "timestamp": timestamp,
+        "replies": replies,
+        "likes": likes,
+        "retweets": retweets,
+        "text": text
+    }
+# Generate timestamps within the last 15 minutes
 def generate_timestamp():
-    current_time = int(time.time())
-    five_minutes_ago = current_time - 300*20  # 300 seconds = 5 minutes
-    return random.randint(five_minutes_ago, current_time)
+    current_time = datetime.utcnow()
+    fifteen_minutes_ago = current_time - timedelta(minutes=15)
+    random_timestamp = fifteen_minutes_ago + timedelta(seconds=random.randint(0, 900))  # 900 seconds = 15 minutes
+    return random_timestamp.strftime("%Y-%m-%d %H:%M:%S+00")
+
 
 # Define the number of records you want to generate
 num_records = 20000
 
 # Kafka topic to publish to
-kafka_topic = 'test'
+kafka_topic = 'TWEET_INGESTION'
 
-# Generate CSV data and publish it to Kafka
+# Generate JSON data and publish it to Kafka
 for _ in range(num_records):
-    id, user, likes, text = generate_random_data()
-    timestamp = generate_timestamp()
-    
-    # Construct a message using your data fields
-    #message = {
-    #    "id": id,
-    #    "user": user,
-    #    "timestamp": timestamp,
-    #    "likes": likes,
-    #    "text": text
-    #}
-    message = f"{id};{user};{timestamp};{likes};{text}"
+    message = generate_random_data()
     
     # Publish the message to Kafka
     producer.send(kafka_topic, value=message)
