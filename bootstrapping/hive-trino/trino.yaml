@@ -6,7 +6,7 @@ metadata:
 spec:
   image:
     productVersion: "414"
-    stackableVersion: "23.7.0"
+    stackableVersion: "23.11.0"
   clusterConfig:
     catalogLabelSelector:
       matchLabels:
@@ -15,10 +15,10 @@ spec:
     config:
       resources:
         cpu:
-          min: 200m
-          max: 1000m
+          min: 50m
+          max: 600m
         memory:
-          limit: 1Gi
+          limit: 1000Mi
     roleGroups:
       default:
         replicas: 1
@@ -26,10 +26,10 @@ spec:
     config:
       resources:
         cpu:
-          min: 200m
-          max: 1000m
+          min: 50m
+          max: 600m
         memory:
-          limit: 1Gi
+          limit: 1000Mi
     roleGroups:
       default:
         replicas: 1
@@ -45,10 +45,5 @@ spec:
     hive:
       metastore:
         configMap: hive
-      # TODO Replace with HDFS
       hdfs:
         configMap: simple-hdfs
-  # TODO Replace with HDFS
-  # configOverrides:
-  #   # If we don't set the endpoint then Trino will try to connect to AWS S3
-  #   hive.s3.endpoint: http://minio:9000
