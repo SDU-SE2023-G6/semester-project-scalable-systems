@@ -1,0 +1,54 @@
+---
+apiVersion: hdfs.stackable.tech/v1alpha1
+kind: HdfsCluster
+metadata:
+  name: simple-hdfs
+spec:
+  image:
+    productVersion: 3.3.6
+  clusterConfig:
+    zookeeperConfigMapName: simple-hdfs-znode
+    listenerClass: external-unstable
+    dfsReplication: 1
+  nameNodes:
+    roleGroups:
+      default:
+        replicas: 2
+    config:
+      resources:
+        cpu:
+          min: 50m
+          max: 500m
+        memory:
+          limit: 512Mi
+        storage:
+          data:
+            capacity: 2Gi
+  dataNodes:
+    roleGroups:
+      default:
+        replicas: 1
+    config:
+      resources:
+        cpu:
+          min: 50m
+          max: 500m
+        memory:
+          limit: 512Mi
+        storage:
+          data:
+            capacity: 20Gi
+  journalNodes:
+    roleGroups:
+      default:
+        replicas: 1
+    config:
+      resources:
+        cpu:
+          min: 50m
+          max: 500m
+        memory:
+          limit: 512Mi
+        storage:
+          data:
+            capacity: 5Gi

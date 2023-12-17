@@ -1,0 +1,49 @@
+---
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCluster
+metadata:
+  name: trino
+spec:
+  image:
+    productVersion: "414"
+    stackableVersion: "23.11.0"
+  clusterConfig:
+    catalogLabelSelector:
+      matchLabels:
+        trino: trino
+  coordinators:
+    config:
+      resources:
+        cpu:
+          min: 50m
+          max: 600m
+        memory:
+          limit: 1000Mi
+    roleGroups:
+      default:
+        replicas: 1
+  workers:
+    config:
+      resources:
+        cpu:
+          min: 50m
+          max: 600m
+        memory:
+          limit: 1000Mi
+    roleGroups:
+      default:
+        replicas: 1
+---
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCatalog
+metadata:
+  name: hive
+  labels:
+    trino: trino
+spec:
+  connector:
+    hive:
+      metastore:
+        configMap: hive
+      hdfs:
+        configMap: simple-hdfs
