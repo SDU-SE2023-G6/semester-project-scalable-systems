@@ -9,25 +9,19 @@ extraSecretEnv: {}
 
 # -- A dictionary of overrides to append at the end of superset_config.py
 configOverrides:
-  python_packages: |
-    # Install required Python packages for KSQL and HDFS
-    pip install ksql sqlalchemy-ksql
+  secret: |
+    SECRET_KEY = 'TcALaA5IMSeSIFXuS5lnaTD99t79VOFPohKjcyw7T1JW5j7rgZG70LSp'
 
 # -- Datasource configuration
 extraConfigs:
-  datasources.yaml: |
+  import_datasources.yaml: |
     databases:
-      - database_name: ksql_database
-        sqlalchemy_uri: ksql://10.1.18.46:8088
+      - database_name: trino_database
+        sqlalchemy_uri: trino://trino@trino.hadoop.svc.cluster.local
 
 # PostgreSQL configuration
 postgresql:
   enabled: true
-  resources:
-      requests:
-        cpu: "250m"
-      limits:
-        cpu: "500m"
   auth:
     username: superset
     password: superset
@@ -50,6 +44,10 @@ init:
     email: admin@superset.com
     password: admin
   loadExamples: false
+
+bootstrapScript: |
+  #!/bin/bash
+  pip install sqlalchemy-trino
 
 # Superset node configuration
 supersetNode:
