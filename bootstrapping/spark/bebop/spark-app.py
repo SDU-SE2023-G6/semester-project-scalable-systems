@@ -114,15 +114,12 @@ def addSentimentColumn(datasource):
 # Create windows for analysis with 5-minute buckets, keeps last 48 hours of aggregates.
 def aggregateTweets(parsedDataSource):
     return parsedDataSource \
-        .withWatermark("timestamp", "4 hours") \
         .groupBy(window("timestamp", "5 minutes", "5 minutes")) \
-        .agg(sum("likes").alias("total_likes"), avg("sentiment").alias("sentiment"), count("*").alias("total_tweets")) \
-        .limit(14400)    
+        .agg(sum("likes").alias("total_likes"), avg("sentiment").alias("sentiment"), count("*").alias("total_tweets"))
    
 # Create windows for analysis with 5-minute buckets, keeps last 48 hours of aggregates.
 def aggregateBtc(parsedDataSource):
     return parsedDataSource \
-        .withWatermark("timestamp", "4 hours") \
         .groupBy(window("timestamp", "5 minutes", "5 minutes")) \
         .agg(avg("open").alias("avg_open"),
              avg("high").alias("avg_high"),
@@ -131,9 +128,16 @@ def aggregateBtc(parsedDataSource):
              avg("volume_btc").alias("avg_volume_btc"),
              avg("volume_currency").alias("avg_volume_currency"),
              avg("weighted_price").alias("avg_weighted_price"),
-             count("*").alias("total_records")) \
-        .limit(14400)
+             count("*").alias("total_records"))
 
+def explodeWindow(aggDataSource):
+    return aggDataSource \
+        .select(
+            col("*"),
+            col("window.start").alias("window_start"),
+            col("window.end").alias("window_end")
+        ) \
+        .drop("window")
 
 # Debug output to console
 def startWriteStreamQuery(stream, outputMode="complete"):
@@ -169,6 +173,10 @@ pds_tweet = addSentimentColumn(pds_tweet)
 agg_tweet = aggregateTweets(pds_tweet)
 agg_btc = aggregateBtc(pds_btc)
 
+# Explode aggregate windows
+agg_tweet = explodeWindow(agg_tweet)
+agg_btc = explodeWindow(agg_btc)
+
 # Print schema for debugging
 pds_tweet.printSchema()
 agg_tweet.printSchema()
@@ -176,8 +184,8 @@ agg_btc.printSchema()
 
 # Start streaming queries
 ws_sentiment = startWriteKafkaStream(pds_tweet, "TWEET_SENTIMENT", "append", checkpoint_sentiment)
-ws_agg_tweet = startWriteKafkaStream(agg_tweet, "TWEET_AGGREGATE", "complete", checkpoint_tweet_agg)
-ws_agg_btc = startWriteKafkaStream(agg_btc, "BITCOIN_AGGREGATE", "complete", checkpoint_btc_agg)
+ws_agg_tweet = startWriteKafkaStream(agg_tweet, "TWEET_AGGREGATE", "update", checkpoint_tweet_agg)
+ws_agg_btc = startWriteKafkaStream(agg_btc, "BITCOIN_AGGREGATE", "update", checkpoint_btc_agg)
 
 ws_sentiment.awaitTermination()
 ws_agg_tweet.awaitTermination()
