@@ -1,0 +1,8 @@
+apiVersion: zookeeper.stackable.tech/v1alpha1
+kind: ZookeeperZnode
+metadata:
+  namespace: druid
+  name: simple-druid-znode
+spec:
+  clusterRef:
+    name: simple-zk.hadoop
