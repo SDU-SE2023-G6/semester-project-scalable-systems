@@ -1,0 +1,10 @@
+
+json_value(parse_json(payload), '$.id', LONG)
+json_value(parse_json(payload), '$.user', STRING)
+json_value(parse_json(payload), '$.fullname', STRING)
+json_value(parse_json(payload), '$.url', STRING)
+json_value(parse_json(payload), '$.timestamp', LONG)
+json_value(parse_json(payload), '$.replies', LONG)
+json_value(parse_json(payload), '$.likes', LONG)
+json_value(parse_json(payload), '$.retweets', LONG)
+json_value(parse_json(payload), '$.text', STRING)
