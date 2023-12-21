@@ -19,10 +19,24 @@ spec:
     tls: null
     zookeeperConfigMapName: simple-druid-znode
   brokers:
+    config:
+      resources:
+        cpu:
+          min: 0m
+          max: 1000m
+        memory:
+          limit: 1Gi
     roleGroups:
       default:
         replicas: 1
   coordinators:
+    config:
+      resources:
+        cpu:
+          min: 0m
+          max: 1000m
+        memory:
+          limit: 1Gi
     roleGroups:
       default:
         replicas: 1
