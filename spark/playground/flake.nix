@@ -29,8 +29,10 @@
             kubectl
             minikube
             kubernetes-helm
+            k9s
           ];
           shellHook = ''
+            alias killkubepf="pkill -f 'kubectl port-forward'"
             alias dc="docker compose"
             alias spark="docker exec -it prime_spark /opt/bitnami/spark/bin/spark-submit /opt/bitnami/spark/work/"
             alias kafkaLogs="docker exec -it prime_kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic"

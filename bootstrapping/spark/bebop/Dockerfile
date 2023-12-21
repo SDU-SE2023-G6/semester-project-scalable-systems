@@ -1,4 +1,4 @@
-#v1.4
+#v1.5
 FROM docker.stackable.tech/demos/pyspark-k8s-with-kafka-and-iceberg:3.3.0-stackable23.4
 
 USER root
@@ -20,7 +20,7 @@ RUN conda install -c conda-forge textblob
 RUN python -m textblob.download_corpora
 
 # Create Conda environment and pack it
-RUN conda create -y -n pyspark_conda_env -c conda-forge pyarrow pandas conda-pack textblob
+RUN conda create -y -n pyspark_conda_env -c conda-forge pyarrow pandas conda-pack textblob python=3.9
 RUN conda run -n pyspark_conda_env /opt/conda/bin/conda pack -f -o /opt/pyspark_conda_env.tar.gz
 
 ENV PATH /opt/conda/envs/pyspark_conda_env/bin:$PATH
@@ -30,9 +30,9 @@ RUN chmod 644 /opt/pyspark_conda_env.tar.gz
 
 USER 1001
 
-ENV PYSPARK_DRIVER_PYTHON=/opt/conda/bin/python
-ENV PYSPARK_PYTHON=/opt/conda/bin/python
-ENV PYTHONPATH=/opt/conda/bin/python
+ENV PYSPARK_DRIVER_PYTHON=/opt/conda/envs/pyspark_conda_env/bin/python3.9
+ENV PYSPARK_PYTHON=/opt/conda/envs/pyspark_conda_env/bin/python3.9
+ENV PYTHONPATH=/opt/conda/envs/pyspark_conda_env/bin/python3.9
 
 # Downloda cor
 RUN python -m textblob.download_corpora
