@@ -52,6 +52,9 @@ spec:
       default:
         replicas: 1
   middleManagers:
+    configOverrides:
+      runtime.properties:
+        druid.worker.capacity: "3"
     config:
       resources:
         cpu:
