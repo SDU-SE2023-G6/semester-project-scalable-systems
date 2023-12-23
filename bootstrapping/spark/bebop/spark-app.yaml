@@ -29,7 +29,7 @@ spec:
     spark.kubernetes.driver.request.cores: "300m"
     spark.kubernetes.executor.request.cores: "100m"
     spark.kubernetes.driver.limit.cores: "500m"
-    spark.kubernetes.executor.limit.cores: "400m"
+    spark.kubernetes.executor.limit.cores: "600m"
     spark.kubernetes.driver.request.memory: "1Gi"
     spark.kubernetes.executor.request.memory: "1Gi"
     spark.kubernetes.driver.limit.memory: "1Gi"

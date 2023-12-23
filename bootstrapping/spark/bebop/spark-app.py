@@ -3,7 +3,7 @@ import sys
 print("Python Version:", sys.version)
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import window, sum, count, to_timestamp, lit, expr, from_json, col, udf, avg
+from pyspark.sql.functions import window, sum, count, to_timestamp, lit, expr, from_json, col, udf, avg, unix_timestamp
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType, DoubleType, FloatType
 from textblob import TextBlob
 
@@ -68,6 +68,10 @@ def addSentimentColumn(datasource):
         .select("*", "sentiment.*") \
         .drop("sentiment")
 
+def replaceTimestampWithUnix(datasource):
+    return datasource.withColumn("timestamp", unix_timestamp("timestamp"))
+
+
 # Debug output to console
 def startWriteStreamQuery(stream, outputMode="complete"):
     return stream.writeStream \
@@ -92,6 +96,8 @@ def startWriteKafkaStream(stream, topic, outputMode, checkpointLocation):
 
 # Parse data sources
 pds_tweet = parseDataSource(df_tweet, tweet_schema)
+
+pds_tweet = replaceTimestampWithUnix(pds_tweet)
 
 # Add sentiment column to tweets
 pds_tweet = addSentimentColumn(pds_tweet)
