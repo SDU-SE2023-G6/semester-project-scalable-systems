@@ -1,0 +1,16 @@
+Video Script
+
+The following contents should be shown in the video presentation:
+
+1) Dashboard presentation [60 seconds]
+ a. Show chart with recent (last 5-10 ingested) tweets. Show either that the visualization updates automatically when a new tweet is ingested OR refresh the page to show that new tweets are ingested.
+ b. Show chart with hottest tweets. Explain either with text or voice what 'hottest tweets' means.
+ c. Show the chart that shows the Bitcoin price development. Show either that the visualization updates automatically when a new Bitcoin datapoint is ingested OR refresh the page to show that new Bitcoin datapoint is ingested.
+ d. Show the sentiment-price correlation chart. Explain what the sentiment is and what sentiment values mean. Then focus on 1-2 timespans showing an interesting correlation. Also, show the real-time updates if possible.
+
+2. Pipeline presentation [60 seconds]
+ a. Show the architecture diagram (Lucidchart). Give a quick overview over the architecture (~20-30 seconds).
+ b. Show either Spark, Kafka or Druid (or all) and show how the topics or database is filled with data. Think about utilizing the web interfaces of the technologies. Or, show how historical data can be downloaded from Druid or Superset.
+ c. (Optional) Show the resources utilization of the cluster.
+
+3. End the video with a short summary, like 'The presented pipeline was run several days and proved to be capable of X, Y and Z'.
