@@ -3,8 +3,8 @@ Video Script
 The following contents should be shown in the video presentation:
 
 1) Dashboard presentation [60 seconds]
- a. Show chart with recent (last 5-10 ingested) tweets. Show either that the visualization updates automatically when a new tweet is ingested OR refresh the page to show that new tweets are ingested.
- b. Show chart with hottest tweets. Explain either with text or voice what 'hottest tweets' means.
+ a. Show chart with recent (last 5-10 ingested) tweets. Show either that the visualization updates automatically when a new tweet is ingested OR refresh the page to show that new tweets are ingested. (note: you can set an automatic refresh rate in the dashboard)
+ b. Show chart with hottest tweets. Explain either with text or voice what 'hottest tweets' means. (note: we are ranking them according to sum of likes+replies+retweets)
  c. Show the chart that shows the Bitcoin price development. Show either that the visualization updates automatically when a new Bitcoin datapoint is ingested OR refresh the page to show that new Bitcoin datapoint is ingested.
  d. Show the sentiment-price correlation chart. Explain what the sentiment is and what sentiment values mean. Then focus on 1-2 timespans showing an interesting correlation. Also, show the real-time updates if possible.
 
