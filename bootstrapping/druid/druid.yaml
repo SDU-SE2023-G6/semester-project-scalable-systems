@@ -19,6 +19,9 @@ spec:
     tls: null
     zookeeperConfigMapName: simple-druid-znode
   brokers:
+    configOverrides:
+        runtime.properties:
+          druid.server.http.maxSubqueryRows: "1000000"
     config:
       resources:
         cpu:
