@@ -28,7 +28,7 @@ spec:
           min: 0m
           max: 1000m
         memory:
-          limit: 1Gi
+          limit: 2Gi
     roleGroups:
       default:
         replicas: 1
@@ -64,7 +64,7 @@ spec:
           min: 0m
           max: 1000m
         memory:
-          limit: 1Gi
+          limit: 2.5Gi
     roleGroups:
       default:
         replicas: 1
