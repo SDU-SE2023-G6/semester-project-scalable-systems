@@ -1,5 +1,7 @@
 # -- Extra environment variables that will be passed into pods
-extraEnv: {}
+extraEnv: {
+  TALISMAN_ENABLED : False
+}
 
 # -- Extra files to mount on `/app/pythonpath` as secrets
 extraSecrets: {}

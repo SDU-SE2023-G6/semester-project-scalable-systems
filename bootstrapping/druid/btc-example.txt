@@ -1,0 +1,1 @@
+{"timestamp": 1451606820, "open": 432.52, "high": 432.53, "low": 432.52, "close": 432.53, "volume_btc": 0.41623259, "volume_currency": 180.03271435, "weighted_price": 432.52911635}

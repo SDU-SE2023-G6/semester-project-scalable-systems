@@ -1,0 +1,10 @@
+
+json_value(parse_json(payload), '$.open', DOUBLE)
+json_value(parse_json(payload), '$.high', DOUBLE)
+json_value(parse_json(payload), '$.low', DOUBLE)
+json_value(parse_json(payload), '$.close', DOUBLE)
+json_value(parse_json(payload), '$.volume_btc', DOUBLE)
+json_value(parse_json(payload), '$.volume_currency', DOUBLE)
+json_value(parse_json(payload), '$.weighted_price', DOUBLE)
+json_value(parse_json(payload), '$.timestamp', LONG)
+

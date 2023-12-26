@@ -1,0 +1,74 @@
+apiVersion: druid.stackable.tech/v1alpha1
+kind: DruidCluster
+metadata:
+  name: simple-druid
+  namespace: druid
+spec:
+  image:
+    productVersion: 27.0.0
+  clusterConfig:
+    deepStorage:
+      hdfs:
+        configMapName: simple-hdfs
+        directory: /data
+    metadataStorageDatabase:
+      dbType: derby
+      connString: jdbc:derby://localhost:1527/var/druid/metadata.db;create=true
+      host: localhost
+      port: 1527
+    tls: null
+    zookeeperConfigMapName: simple-druid-znode
+  brokers:
+    configOverrides:
+        runtime.properties:
+          druid.server.http.maxSubqueryRows: "1000000"
+    config:
+      resources:
+        cpu:
+          min: 0m
+          max: 1000m
+        memory:
+          limit: 2Gi
+    roleGroups:
+      default:
+        replicas: 1
+  coordinators:
+    config:
+      resources:
+        cpu:
+          min: 0m
+          max: 1000m
+        memory:
+          limit: 1Gi
+    roleGroups:
+      default:
+        replicas: 1
+  historicals:
+    config:
+      resources:
+        cpu:
+          min: 0m
+          max: 1000m
+        memory:
+          limit: 1Gi
+    roleGroups:
+      default:
+        replicas: 1
+  middleManagers:
+    configOverrides:
+      runtime.properties:
+        druid.worker.capacity: "3"
+    config:
+      resources:
+        cpu:
+          min: 0m
+          max: 1000m
+        memory:
+          limit: 2.5Gi
+    roleGroups:
+      default:
+        replicas: 1
+  routers:
+    roleGroups:
+      default:
+        replicas: 1

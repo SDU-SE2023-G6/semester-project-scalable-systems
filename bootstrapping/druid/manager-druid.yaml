@@ -1,0 +1,266 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: "2023-12-19T10:18:44Z"
+  generation: 7
+  labels:
+    app.kubernetes.io/component: middlemanager
+    app.kubernetes.io/instance: simple-druid
+    app.kubernetes.io/managed-by: druid.stackable.tech_druidcluster
+    app.kubernetes.io/name: druid
+    app.kubernetes.io/role-group: default
+    app.kubernetes.io/version: 27.0.0-stackable23.11.0
+  name: simple-druid-middlemanager-default
+  namespace: kube-system
+  ownerReferences:
+  - apiVersion: druid.stackable.tech/v1alpha1
+    controller: true
+    kind: DruidCluster
+    name: simple-druid
+    uid: 680f2b3e-7783-4f68-b0fe-7e9198eb9fe3
+  resourceVersion: "27050"
+  uid: 8e5c302f-6fdf-4df9-b9be-fffdd63fc475
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: middlemanager
+      app.kubernetes.io/instance: simple-druid
+      app.kubernetes.io/name: druid
+      app.kubernetes.io/role-group: default
+  serviceName: simple-druid-middlemanager-default
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/component: middlemanager
+        app.kubernetes.io/instance: simple-druid
+        app.kubernetes.io/managed-by: druid.stackable.tech_druidcluster
+        app.kubernetes.io/name: druid
+        app.kubernetes.io/role-group: default
+        app.kubernetes.io/version: 27.0.0-stackable23.11.0
+    spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: datanode
+                  app.kubernetes.io/instance: simple-hdfs
+                  app.kubernetes.io/name: hdfs
+              topologyKey: kubernetes.io/hostname
+            weight: 50
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: middlemanager
+                  app.kubernetes.io/instance: simple-druid
+                  app.kubernetes.io/name: druid
+              topologyKey: kubernetes.io/hostname
+            weight: 70
+      containers:
+      - args:
+        - |
+          cp -RL /stackable/config/* /stackable/rwconfig
+          cp -RL /stackable/log_config/* /stackable/rwconfig
+          cp -RL /stackable/hdfs/* /stackable/rwconfig 2>/dev/null || :
+
+          prepare_signal_handlers()
+          {
+              unset term_child_pid
+              unset term_kill_needed
+              trap 'handle_term_signal' TERM
+          }
+
+          handle_term_signal()
+          {
+              if [ "${term_child_pid}" ]; then
+                  kill -TERM "${term_child_pid}" 2>/dev/null
+              else
+                  term_kill_needed="yes"
+              fi
+          }
+
+          wait_for_termination()
+          {
+              set +e
+              term_child_pid=$1
+              if [[ -v term_kill_needed ]]; then
+                  kill -TERM "${term_child_pid}" 2>/dev/null
+              fi
+              wait ${term_child_pid} 2>/dev/null
+              trap - TERM
+              wait ${term_child_pid} 2>/dev/null
+              set -e
+          }
+
+          rm -f /stackable/log/_vector/shutdown
+          prepare_signal_handlers
+          /stackable/druid/bin/run-druid middleManager /stackable/rwconfig &
+          echo "$!" >> /tmp/DRUID_PID
+          wait_for_termination $(cat /tmp/DRUID_PID)
+          mkdir -p /stackable/log/_vector && touch /stackable/log/_vector/shutdown
+        command:
+        - /bin/bash
+        - -x
+        - -euo
+        - pipefail
+        - -c
+        env:
+        - name: INTERNAL_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: INTERNAL_SECRET
+              name: simple-druid-internal-secret
+              optional: false
+        image: docker.stackable.tech/stackable/druid:27.0.0-stackable23.11.0
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/bash
+              - -x
+              - -euo
+              - pipefail
+              - -c
+              - "log() { \n  echo \"$(date --utc +%FT%T,%3N) INFO [stackable_lifecycle_pre_stop]
+                - $1\" >> /proc/$(cat /tmp/DRUID_PID)/fd/1 2>&1 \n}\n\nresponse=$(curl
+                -v --fail --insecure -X POST http://127.0.0.1:8091/druid/worker/v1/disable)\nlog
+                \"Disable middle manager to stop overlord from sending tasks: $response\"\n\nend_time_seconds=$(date
+                --date=\"+300 seconds\" '+%s')\nwhile :\ndo\n  current_time_seconds=$(date
+                '+%s')\n  log \"Check if termination grace period (300 seconds) is
+                reached...\"\n  if [ $current_time_seconds -gt $end_time_seconds ]\n
+                \ then\n    log \"The termination grace period is reached!\"\n    break\n
+                \ fi\n  \n  tasks=$(curl -v --fail --insecure -X GET http://127.0.0.1:8091/druid/worker/v1/tasks)\n
+                \ log \"Check if all tasks are finished... Running: $tasks\"\n  if
+                [ $tasks = \"[]\" ]\n  then\n    log \"All tasks finished!\"\n     break\n
+                \ fi\n  \n  log \"Sleeping 2 seconds...\"\n  log \"\"\n  sleep 2\ndone\nlog
+                \"All done!\"\n"
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 3
+        name: druid
+        ports:
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        - containerPort: 8091
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 1
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 1200m
+            memory: 1Gi
+          requests:
+            cpu: 0m
+            memory: 0Mi 
+        startupProbe:
+          failureThreshold: 30
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 3
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /stackable/config
+          name: config
+        - mountPath: /stackable/rwconfig
+          name: rwconfig
+        - mountPath: /stackable/log_config
+          name: log-config
+        - mountPath: /stackable/log
+          name: log
+        - mountPath: /stackable/hdfs
+          name: hdfs
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: false
+      initContainers:
+      - args:
+        - mkdir --parents /stackable/log/prepare && exec > >(tee /stackable/log/prepare/container.stdout.log)
+          2> >(tee /stackable/log/prepare/container.stderr.log >&2)
+        command:
+        - /bin/bash
+        - -x
+        - -euo
+        - pipefail
+        - -c
+        image: docker.stackable.tech/stackable/druid:27.0.0-stackable23.11.0
+        imagePullPolicy: Always
+        name: prepare
+        resources:
+          limits:
+            cpu: 400m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /stackable/log
+          name: log
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 0
+        runAsUser: 1000
+      serviceAccount: druid-serviceaccount
+      serviceAccountName: druid-serviceaccount
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: simple-druid-middlemanager-default
+        name: config
+      - emptyDir: {}
+        name: rwconfig
+      - configMap:
+          defaultMode: 420
+          name: simple-druid-middlemanager-default
+        name: log-config
+      - emptyDir:
+          sizeLimit: 30Mi
+        name: log
+      - configMap:
+          defaultMode: 420
+          name: simple-hdfs
+        name: hdfs
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+status:
+  availableReplicas: 0
+  collisionCount: 0
+  currentReplicas: 1
+  currentRevision: simple-druid-middlemanager-default-7ff467b578
+  observedGeneration: 7
+  replicas: 1
+  updateRevision: simple-druid-middlemanager-default-7ff467b578
+  updatedReplicas: 1
