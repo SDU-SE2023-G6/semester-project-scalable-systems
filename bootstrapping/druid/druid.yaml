@@ -6,6 +6,7 @@ metadata:
 spec:
   image:
     productVersion: 27.0.0
+    pullPolicy: IfNotPresent # <----- Delete when the docker hub is not blocked anymore
   clusterConfig:
     deepStorage:
       hdfs:
